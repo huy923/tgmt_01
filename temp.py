@@ -1,4 +1,3 @@
-
 import cv2
 from deepface import DeepFace
 # Load the Haar cascade for face detection
@@ -27,7 +26,6 @@ def main():
             break
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
-        
         # Run DeepFace less frequently and on a cropped face to speed up
         frame_count += 1
         if len(faces) > 0 and frame_count % analysis_interval == 0:
@@ -72,8 +70,8 @@ def main():
             break
     out.release()
     cam.release()
+    # out.
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()
-            
