@@ -1,8 +1,8 @@
 import cv2
 from deepface import DeepFace
 # Load the Haar cascade for face detection
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-
+face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
+age_net = cv2.dnn.readNetFromCaffe('age_deploy.prototxt', 'age_net.caffemodel')
 def main():
     # Open the default camera change to 0 for webcam laptop / 2 for webcam external
     cam = cv2.VideoCapture(2)
