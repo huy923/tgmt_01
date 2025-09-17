@@ -28,6 +28,7 @@ def main():
     out = cv2.VideoWriter('output.mp4',  cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (frame_width, frame_height)) 
     # cv2.namedWindow('frame',cv2.WINDOW_FULLSCREEN)
     fontface = cv2.FONT_HERSHEY_SIMPLEX
+    flags = cv2.WINDOW_NORMAL
     while True:
         ret, frame = cam.read()
         if not ret:
@@ -59,7 +60,7 @@ def main():
         # frame = cv2.resize(frame, (frame_width, frame_height))
         # out.write(frame)
         # Display the camera
-        cv2.namedWindow('Camera', cv2.WINDOW_NORMAL)
+        cv2.namedWindow('Camera', flags)
         # cv2.resizeWindow('Camera', 800, 600) # Resize window to 800x600
         cv2.imshow('Camera', frame)
         # Press 'q' to exit the loop
