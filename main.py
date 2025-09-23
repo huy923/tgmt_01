@@ -17,13 +17,14 @@ def predict_age(face, net):
 
 def main():
     # Open the default camera change to 0 for webcam laptop / 2 for webcam external
-    cam = cv2.VideoCapture(2) # 0 for laptop webcam, 2 for external webcam
+    cam = cv2.VideoCapture(0) # 0 for laptop webcam, 2 for external webcam
     
     # print(cv2.VideoCapture.getBackendName(cam))
     # Get the default frame width and height
     frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
     print(f'Frame dimensions: {frame_width}x{frame_height}')
+    
     # change to 'output.avi' for video capture
     out = cv2.VideoWriter('output.mp4',  cv2.VideoWriter_fourcc(*'mp4v'), 30.0, (frame_width, frame_height)) 
     # cv2.namedWindow('frame',cv2.WINDOW_FULLSCREEN)
@@ -38,7 +39,7 @@ def main():
         
         # Detect faces 
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
-        # Analyze face for emotion, gender
+        # Analyze face for emotion, gender 
 
         analyze = DeepFace.analyze(frame, actions=['emotion', 'gender'], enforce_detection=False, detector_backend='skip')
         # analysis can be a dict or a list of dicts
