@@ -73,7 +73,8 @@ def train_model(label):
         raise ValueError("No faces found for training. Ensure dataset images contain detectable faces and labels map is correct.")
     print(faces)
     print(labels_list)
-    # Use the global recognizer defined at module level
+    # Use the global recog
+    # nizer defined at module level
     recognizer.train(faces, np.array(labels_list))
     recognizer.write('trainer.yml')
     return recognizer
