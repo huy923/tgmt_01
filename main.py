@@ -4,8 +4,8 @@ from deepface import DeepFace
 # Load the Haar cascade for face detection and age prediction
 AGE_LIST = ['(0-2)', '(3-6)', '(7-12)', '(13-17)', '(18-24)', '(25-32)', '(33-39)', '(40-45)', '(46-50)', '(51-56)', '(57-60)', '(61-65)', '(66-70)', '(71-75)', '(76-80)', '(81-85)', '(86-90)', '(91-95)', '(96-100)']
 
-face_cascade = cv2.CascadeClassifier("./haarcascade_frontalface_default.xml")
-age_net = cv2.dnn.readNetFromCaffe('./age_deploy.prototxt', './age_net.caffemodel')
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+age_net = cv2.dnn.readNetFromCaffe('./model/age_deploy.prototxt', './model/age_net.caffemodel')
 def predict_age(face, net):
     # Load the image as a blob 227x227 and resize to 200x200 and 78.4263377603, 87.7689143744, 114.895847746 is values for age prediction
     blob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), (78.4263377603, 87.7689143744, 114.895847746) , swapRB=False) 
@@ -16,7 +16,7 @@ def predict_age(face, net):
 
 def main():
     # Open the default camera change to 0 for webcam laptop / 2 for webcam external
-    cam = cv2.VideoCapture(0) # 0 for laptop webcam, 2 for external webcam
+    cam = cv2.VideoCapture(2) # 0 for laptop webcam, 2 for external webcam
     
     # print(cv2.VideoCapture.getBackendName(cam))
     # cv2.namedWindow('frame',cv2.WINDOW_FULLSCREEN)

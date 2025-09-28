@@ -1,13 +1,14 @@
 import cv2
 import numpy as np
 # from google.colab.patches import cv2_imshow
-face_proto = "opencv_face_detector.pbtxt"
-face_model = "opencv_face_detector_uint8.pb"
-age_proto = "age_deploy.prototxt"
-age_model = "age_net.caffemodel"
+face_proto = "./model/opencv_face_detector.pbtxt"
+face_model = "./model/opencv_face_detector_uint8.pb"
+age_proto = "./model/age_deploy.prototxt"
+age_model = "./model/age_net.caffemodel"
 
 face_net = cv2.dnn.readNetFromTensorflow(face_model, face_proto)
 age_net = cv2.dnn.readNetFromCaffe(age_proto, age_model)
+
 def detect_faces(net, frame, conf_threshold=0.7):
     frame_height = frame.shape[0]
     frame_width = frame.shape[1]
@@ -55,5 +56,5 @@ def process_image(image_path):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-image_path = "kid1.jpg"
+image_path = "./dataset/dung.1.jpg"
 process_image(image_path)

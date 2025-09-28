@@ -2,11 +2,10 @@ import cv2
 import numpy as np
 import os
 import glob
-
-
 from tensorflow._api import v2
 
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+# print(cv2.data.haarcascades)
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades+ 'haarcascade_frontalface_default.xml')
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 
 def capture_images(User):
@@ -14,26 +13,25 @@ def capture_images(User):
     if not os.path.exists('dataset'):
         os.makedirs('dataset')
 
+    # How many images to capture
+    count = 100
+    
     # Capture images
-    count = 0
     cap = cv2.VideoCapture(2)
-    # Capture images
     
     while True:
         ret, frame = cap.read()
+        if not ret: break
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        faces = face_cascade.detectMultiScale(gray, 1.1, 5)
         # Draw rectangles around faces and save images
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
-            count += 1
-
-            cv2.imwrite(f'dataset/{User}.{count}.jpg', gray[y:y+h, x:x+w])
+            count -= 1
+            cv2.imwrite(f'./dataset/{User}_{count}.jpg', gray[y:y+h, x:x+w])
             cv2.imshow('frame', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-        # Break if count is greater than 100 this one will take 100 images from the user
-        if count >= 100:
+
+        if count <= 0:
             break
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -42,14 +40,14 @@ def capture_images(User):
     cv2.destroyAllWindows()
 
 def train_model(label):
-    files = glob.glob('dataset/*.jpg')
+    files = glob.glob('./dataset/*.jpg')
     faces = []
     labels_list = []
     for f in files:
         img_gray = cv2.imread(f, cv2.IMREAD_GRAYSCALE)
         if img_gray is None:
             continue
-        name = os.path.basename(f).split('.')[0]
+        name = os.path.basename(f).split('_')[0]
         
         if name not in label:
             continue
@@ -57,7 +55,6 @@ def train_model(label):
         detected_faces = face_cascade.detectMultiScale(
             img_gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
         )
-
 
         if len(detected_faces) > 0:
             x, y, w, h = detected_faces[0]
@@ -76,15 +73,18 @@ def train_model(label):
     # Use the global recog
     # nizer defined at module level
     recognizer.train(faces, np.array(labels_list))
-    recognizer.write('trainer.yml')
+    recognizer.write('testTrainer.yml')
     return recognizer
-
+def predict(image_path):
+    frame = cv2.imread(image_path)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
 if __name__ == '__main__':
     # capture_images("huy")
     
     label = {"huy": 0, "dung": 1}
     Recognizer = train_model(label)
-    Recognizer.read('trainer.yml')
+    Recognizer.read('testTrainer.yml')
     
     # label = "dung"
     # Recognizer =train_model(label)
