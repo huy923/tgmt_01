@@ -7,7 +7,8 @@ import time
 AGE_LIST = ['(0-2)', '(3-6)', '(7-12)', '(13-17)', '(18-24)', '(25-32)', '(33-39)', '(40-45)', '(46-50)', '(51-56)', '(57-60)', '(61-65)', '(66-70)', '(71-75)', '(76-80)', '(81-85)', '(86-90)', '(91-95)', '(96-100)']
 # print(cv2.data.haarcascades)
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
+cv2.cuda.DeviceInfo_ComputeMode()
+# cv2.cuda.setDevice(0) # Set CUDA device and 0 means default device
 # Check for GPU availability
 def check_gpu_availability():
     # Check OpenCV DNN GPU support
@@ -45,11 +46,12 @@ else:
     age_net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
     age_net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
     print("Age prediction network configured for CPU")
-def predict_age(face, net):
+def predict_age(face):
     # Load the image as a blob 227x227 and resize to 200x200 and 78.4263377603, 87.7689143744, 114.895847746 is values for age prediction
+    ageNet = age_net
     blob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), (78.4263377603, 87.7689143744, 114.895847746) , swapRB=False) 
-    net.setInput(blob)
-    age_preds = net.forward()
+    ageNet.setInput(blob)
+    age_preds = ageNet.forward()
     age = AGE_LIST[age_preds[0].argmax()]
     return age
 
@@ -74,8 +76,8 @@ def main():
     cached_results = None
     
     # FPS calculation
-    fps_start_time = time.time()
-    fps_frame_count = 0
+    # fps_start_time = time.time()
+    # fps_frame_count = 0
 
     while True:
         ret, frame = cam.read()
@@ -83,7 +85,7 @@ def main():
             break
             
         frame_count += 1
-        fps_frame_count += 1
+        # fps_frame_count += 1
         current_time = time.time()
         
         # Convert the frame to grayscale
@@ -125,7 +127,7 @@ def main():
         age = "Unknown"
         if len(faces) > 0 and cached_results:
             try:
-                age = predict_age(frame, age_net)
+                age = predict_age(frame)
             except Exception as e:
                 print(f"Age prediction error: {e}")
         
@@ -137,10 +139,10 @@ def main():
             cv2.putText(frame, f"Emotion: {dominant}", (x, y+h+60), fontface, 0.5, (255, 0, 0), 2)
         
         # Calculate and display FPS
-        if fps_frame_count % 30 == 0:  # Update FPS every 30 frames
-            fps = 30 / (current_time - fps_start_time)
-            fps_start_time = current_time
-            cv2.putText(frame, f'FPS: {fps:.1f}', (10, 30), fontface, 0.7, (0, 255, 0), 2)
+        # if fps_frame_count % 30 == 0:  # Update FPS every 30 frames
+        #     fps = 30 / (current_time - fps_start_time)
+        #     fps_start_time = current_time
+        #     cv2.putText(frame, f'FPS: {fps:.1f}', (10, 30), fontface, 0.7, (0, 255, 0), 2)
 
         # Display the camera
         flags = cv2.WINDOW_NORMAL
